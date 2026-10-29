@@ -1,0 +1,71 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#7cc7ec"><title>Ada Kur 3D</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#7cc7ec;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#2b2140}
+#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#hud{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 8px) 10px 0;pointer-events:none;z-index:5}
+.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.pill{pointer-events:auto;background:linear-gradient(#fffdf7,#f1e7d2);border-radius:20px;padding:4px 10px 4px 6px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:5px;box-shadow:0 3px 0 #c9b48e,0 4px 10px #0003;min-width:64px}
+.pill i{font-style:normal;font-size:17px}.pill .plus{margin-left:auto;background:#3fb950;color:#fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center;font-size:15px}
+.pill small{font-size:10px;color:#8a7a5a;font-weight:700}
+#lvl{pointer-events:auto;width:50px;height:50px;border-radius:50%;background:conic-gradient(#ffcf3a var(--p,0%),#fff5 0);display:grid;place-items:center;box-shadow:0 4px 10px #0003;flex:none}
+#lvl b{width:40px;height:40px;border-radius:50%;background:linear-gradient(#7b5cff,#4b2fd6);color:#fff;display:grid;place-items:center;font-size:18px}
+#quest{pointer-events:auto;background:#fffdf7ee;border-radius:14px;padding:8px 10px;max-width:250px;box-shadow:0 4px 12px #0003;font-size:13px;font-weight:700}
+#quest .bar{height:7px;background:#e7dcc5;border-radius:4px;margin-top:5px;overflow:hidden}#quest .bar i{display:block;height:100%;background:linear-gradient(90deg,#3fb950,#8be05f);width:0}
+#quest button{margin-top:6px}
+#bottom{position:fixed;left:0;right:0;bottom:0;padding:0 12px calc(env(safe-area-inset-bottom) + 12px);display:flex;justify-content:center;gap:12px;z-index:5}
+.big{border:0;border-radius:18px;padding:8px 0 6px;width:96px;font-weight:900;font-size:13px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:1px;box-shadow:0 5px 0 #0003,0 6px 14px #0003;position:relative}
+.big span{font-size:26px}.big:active{transform:translateY(3px);box-shadow:0 2px 0 #0003}
+.b1{background:linear-gradient(#ffb54a,#f07c1e)}.b2{background:linear-gradient(#5fd38a,#2a9d5c)}.b3{background:linear-gradient(#b48bff,#7546e8)}
+.dot{position:absolute;top:-4px;right:-4px;background:#ff3b5c;width:16px;height:16px;border-radius:50%;border:2px solid #fff;display:none}
+.btn{border:0;border-radius:12px;padding:9px 14px;font-weight:900;font-size:14px;color:#fff;background:linear-gradient(#5fd38a,#2a9d5c);box-shadow:0 3px 0 #1d7a45}
+.btn.g{background:linear-gradient(#b48bff,#7546e8);box-shadow:0 3px 0 #4b2fa0}.btn.o{background:linear-gradient(#ffb54a,#f07c1e);box-shadow:0 3px 0 #b85a10}.btn.x{background:#d8cfbd;color:#5a4d36;box-shadow:0 3px 0 #b3a68a}
+.btn:disabled{filter:grayscale(1);opacity:.6}
+#sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;background:linear-gradient(#fffaf0,#f3e8d3);border-radius:22px 22px 0 0;padding:14px 12px calc(env(safe-area-inset-bottom) + 14px);transform:translateY(105%);transition:transform .28s cubic-bezier(.2,1.3,.4,1);max-height:72%;overflow:auto;box-shadow:0 -6px 24px #0004}
+#sheet.on{transform:none}#sheet h3{margin:0 0 10px;font-size:19px;display:flex;justify-content:space-between;align-items:center}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.card{background:#fff;border-radius:14px;padding:8px 6px;text-align:center;box-shadow:0 3px 0 #e2d4b8;font-size:12px;font-weight:700;position:relative}
+.card .ic{font-size:30px}.card .nm{font-size:13px;font-weight:900}.card .cost{color:#7a6a4a;margin:3px 0}.card.lock{opacity:.5}
+.card.dis{opacity:.75}
+.shop .card{display:flex;align-items:center;gap:10px;text-align:left;padding:10px;margin-bottom:8px}.shop .card .ic{font-size:34px}.shop .card div{flex:1}
+.shop .card .btn{flex:none;min-width:86px}.tag{font-size:10px;background:#ff3b5c;color:#fff;border-radius:6px;padding:1px 5px;margin-left:4px}
+.demo{background:#fff3c4;border-radius:10px;padding:7px 9px;font-size:12px;font-weight:700;margin-bottom:10px;color:#6b5400}
+.sec{font-size:13px;font-weight:900;color:#8a7a5a;margin:10px 2px 6px}
+#modal{position:fixed;inset:0;background:#0007;z-index:40;display:none;align-items:center;justify-content:center;padding:24px}
+#modal.on{display:flex}#modal .box{background:linear-gradient(#fffaf0,#f3e8d3);border-radius:22px;padding:20px;max-width:330px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
+#modal h2{margin:0 0 8px}#modal p{margin:6px 0 14px;font-weight:600;line-height:1.4}#modal .acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+#toast{position:fixed;left:50%;top:150px;transform:translateX(-50%);background:#2b2140e6;color:#fff;padding:9px 16px;border-radius:14px;font-weight:700;font-size:14px;z-index:30;opacity:0;transition:opacity .25s;pointer-events:none;text-align:center;max-width:86%}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:15}
+.float{position:absolute;font-weight:900;font-size:20px;color:#fff;text-shadow:0 2px 0 #0007,0 0 6px #0005;transform:translate(-50%,-50%);animation:up 1s ease-out forwards;white-space:nowrap}
+@keyframes up{to{transform:translate(-50%,-260%);opacity:0}}
+.fly{position:absolute;font-size:22px;transition:left .65s cubic-bezier(.5,-0.3,.7,1),top .65s cubic-bezier(.3,0,.9,.6),transform .65s;transform:translate(-50%,-50%)}
+.lbl{position:absolute;transform:translate(-50%,-100%);background:#2b2140d0;color:#fff;font-size:12px;font-weight:800;padding:2px 7px;border-radius:9px;white-space:nowrap}
+#hand{position:fixed;font-size:44px;z-index:25;pointer-events:none;display:none;transform:translate(-20%,0);filter:drop-shadow(0 3px 3px #0006)}
+#hand.bob{animation:bob .8s ease-in-out infinite}@keyframes bob{50%{margin-top:14px}}
+#tip{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:#fffdf7;border-radius:16px;padding:10px 14px;font-weight:800;font-size:15px;z-index:24;box-shadow:0 5px 16px #0004;display:none;text-align:center;width:max-content;max-width:88%;border:3px solid #ffcf3a}
+#ad{position:fixed;inset:0;background:#111;color:#fff;z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column;font-weight:800;gap:12px}
+#ad.on{display:flex}
+#loading{position:fixed;inset:0;background:linear-gradient(#7cc7ec,#bfe8f7);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:60;font-weight:900;font-size:28px;color:#fff;text-shadow:0 3px 0 #2b7fa8}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="hud">
+ <div class="row"><div id="lvl"><b id="lvn">1</b></div>
+  <div class="pill" id="pCoin"><i>🪙</i><span id="coins">0</span></div>
+  <div class="pill" id="pGem" style="margin-left:auto"><i>💎</i><span id="gems">0</span><span class="plus">+</span></div></div>
+ <div class="row"><div class="pill" id="pWood"><i>🪵</i><span id="wood">0</span></div>
+  <div class="pill" id="pStone"><i>🪨</i><span id="stone">0</span></div>
+  <div class="pill" id="pEn" style="margin-left:auto"><i>⚡</i><span id="en">0</span><small id="ent"></small><span class="plus">+</span></div></div>
+ <div id="quest"></div>
+</div>
+<div id="fx"></div>
+<div id="bottom"><button class="big b1" id="bBuild"><span>🔨</span>İnşa Et</button><button class="big b2" id="bQuest"><span>📋</span>Görevler<i class="dot" id="qdot"></i></button><button class="big b3" id="bShop"><span>🛒</span>Mağaza</button></div>
+<div id="sheet"></div>
+<div id="modal"><div class="box" id="mbox"></div></div>
+<div id="toast"></div><div id="hand">👆</div><div id="tip"></div>
+<div id="ad"><div style="font-size:15px;opacity:.7">DEMO REKLAM</div><div style="font-size:40px">📺</div><div id="adt">Reklam oynatılıyor… 3</div></div>
+<div id="loading">🏝️ Ada Kur 3D</div>
+<script type="module" src="game.js"></script>
+</body></html>
